@@ -124,6 +124,8 @@ uvicorn main:app --reload --port 8000
 API available at `http://localhost:8000`.
 Interactive docs: `http://localhost:8000/docs`
 
+> SQLite requires no setup — the database file (`calculator.db`) is created automatically on first start.
+
 ### Frontend
 
 ```bash
