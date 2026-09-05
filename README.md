@@ -243,6 +243,32 @@ curl -X POST http://localhost:8000/api/percent \
 # {"operation":"percent","operand_a":10.0,"operand_b":200.0,"result":20.0}
 ```
 
+### Chained operations (`?persist=false`)
+
+Intermediate chain steps are computed but not saved to history. Only the final `=` call persists:
+
+```bash
+# Step 1: 5 × 6 = 30 (intermediate — not saved)
+curl -X POST "http://localhost:8000/api/multiply?persist=false" \
+  -H "Content-Type: application/json" \
+  -d '{"a": 5, "b": 6}'
+# {"operation":"multiply","operand_a":5.0,"operand_b":6.0,"result":30.0}
+
+# Step 2: 30 + 20 = 50 (intermediate — not saved)
+curl -X POST "http://localhost:8000/api/add?persist=false" \
+  -H "Content-Type: application/json" \
+  -d '{"a": 30, "b": 20}'
+# {"operation":"add","operand_a":30.0,"operand_b":20.0,"result":50.0}
+
+# Step 3: 50 ÷ 2 = 25 (final = pressed — saved to history)
+curl -X POST http://localhost:8000/api/divide \
+  -H "Content-Type: application/json" \
+  -d '{"a": 50, "b": 2}'
+# {"operation":"divide","operand_a":50.0,"operand_b":2.0,"result":25.0}
+```
+
+History will contain only the final entry (`50 ÷ 2 = 25`), not the two intermediate steps.
+
 ### History
 
 ```bash
