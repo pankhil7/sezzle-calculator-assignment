@@ -346,6 +346,22 @@ npm test -- --coverage --run    # with coverage report
 
 ---
 
+## Assumptions
+
+The assignment left several details unspecified. The following decisions were made:
+
+| # | Assumption | Decision |
+|---|---|---|
+| 1 | Database not specified | SQLite chosen — zero infrastructure, no setup required |
+| 2 | History size not specified | Last 50 entries returned, most recent first |
+| 3 | Floating-point precision not specified | Results rounded to 10 decimal places to avoid artefacts like `0.1 + 0.2 = 0.30000000000004` |
+| 4 | Chain step history behaviour not specified | Intermediate steps use `?persist=false` — only the final `=` result is saved to history |
+| 5 | Square root operand count not specified | Treated as unary (`√a`) — consistent with standard calculator behaviour |
+| 6 | Percent definition not specified | Defined as `(a / 100) × b` — i.e. `a`% of `b` (e.g. `20% of 200 = 40`) |
+| 7 | Input length not specified | Capped at 12 digits — consistent with physical calculator conventions |
+
+---
+
 ## Design Decisions
 
 ### Separate endpoint per operation
