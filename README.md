@@ -2,6 +2,8 @@
 
 A full-stack calculator application with a React/TypeScript frontend and a Python/FastAPI backend. All arithmetic is performed server-side; every finalised calculation is persisted to a SQLite database and displayed in a live history panel.
 
+**Demo:** [Watch on Loom](https://www.loom.com/share/1dc7868d19854bc2b7d195d2dd18db25)
+
 ---
 
 ## Architecture
