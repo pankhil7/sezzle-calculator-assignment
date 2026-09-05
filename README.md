@@ -359,6 +359,7 @@ The assignment left several details unspecified. The following decisions were ma
 | 5 | Square root operand count not specified | Treated as unary (`√a`) — consistent with standard calculator behaviour |
 | 6 | Percent definition not specified | Defined as `(a / 100) × b` — i.e. `a`% of `b` (e.g. `20% of 200 = 40`) |
 | 7 | Input length not specified | Capped at 12 digits — consistent with physical calculator conventions |
+| 8 | Output length not specified | No hard truncation — results are rounded to 10 decimal places (capping most outputs at ~13 characters); the display scales font size down for longer results |
 
 ---
 
