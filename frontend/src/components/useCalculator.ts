@@ -1,27 +1,8 @@
 import { useState } from 'react'
 import * as api from '../services/calculatorApi'
-import { CalculationResult, Operation } from '../types'
+import { Operation } from '../types'
 import { toUserFriendlyError } from '../util/errorMessages'
-
-const OP_MAP: Record<Operation, (a: number, b: number, persist?: boolean) => Promise<CalculationResult>> = {
-  add:      (a, b, persist) => api.add(a, b, persist),
-  subtract: (a, b, persist) => api.subtract(a, b, persist),
-  multiply: (a, b, persist) => api.multiply(a, b, persist),
-  divide:   (a, b, persist) => api.divide(a, b, persist),
-  power:    (a, b, persist) => api.power(a, b, persist),
-  sqrt:     (a, _, persist) => api.sqrt(a, persist),
-  percent:  (a, b, persist) => api.percent(a, b, persist),
-}
-
-const OP_SYMBOLS: Record<Operation, string> = {
-  add: '+',
-  subtract: '−',
-  multiply: '×',
-  divide: '÷',
-  power: '^',
-  sqrt: '√',
-  percent: '%',
-}
+import { OP_MAP, OP_SYMBOLS } from '../constants/operationConstants'
 
 export interface CalculatorState {
   expression: string
@@ -78,6 +59,40 @@ export function useCalculator(onCalculation: () => void): CalculatorState & Calc
     }
   }
 
+  const changeOperator = (op: Operation) => {
+    setSelectedOperation(op)
+    setExpression(`${previousInput} ${OP_SYMBOLS[op]}`)
+  }
+
+  const chainOperation = async (op: Operation) => {
+    const result = await evaluatePending(
+      parseFloat(previousInput),
+      parseFloat(currentInput),
+      selectedOperation!
+    )
+    if (result === null) return
+    setExpression(`${result} ${OP_SYMBOLS[op]}`)
+    setPreviousInput(result)
+    setSelectedOperation(op)
+    setCurrentInput('')
+  }
+
+  const startOperation = (op: Operation) => {
+    const inputVal = currentInput || '0'
+    setPreviousInput(inputVal)
+    setSelectedOperation(op)
+    setExpression(`${inputVal} ${OP_SYMBOLS[op]}`)
+    setCurrentInput('')
+  }
+
+  const continueFromResult = (op: Operation) => {
+    setPreviousInput(currentInput)
+    setSelectedOperation(op)
+    setExpression(`${currentInput} ${OP_SYMBOLS[op]}`)
+    setJustCalculated(false)
+    setCurrentInput('')
+  }
+
   const handleOperator = async (op: Operation) => {
     setError('')
 
@@ -86,44 +101,22 @@ export function useCalculator(onCalculation: () => void): CalculatorState & Calc
       return
     }
 
-    // User changed mind on operator — update silently
     if (selectedOperation && currentInput === '' && !justCalculated) {
-      setSelectedOperation(op)
-      setExpression(`${previousInput} ${OP_SYMBOLS[op]}`)
+      changeOperator(op)
       return
     }
 
-    // CHAINING: both operands ready → evaluate first, carry result forward
     if (selectedOperation && previousInput !== '' && currentInput !== '' && !justCalculated) {
-      const result = await evaluatePending(
-        parseFloat(previousInput),
-        parseFloat(currentInput),
-        selectedOperation
-      )
-      if (result === null) return
-      setExpression(`${result} ${OP_SYMBOLS[op]}`)
-      setPreviousInput(result)
-      setSelectedOperation(op)
-      setCurrentInput('')
+      await chainOperation(op)
       return
     }
 
-    // After a completed calculation — use result as first operand
     if (justCalculated) {
-      setPreviousInput(currentInput)
-      setSelectedOperation(op)
-      setExpression(`${currentInput} ${OP_SYMBOLS[op]}`)
-      setJustCalculated(false)
-      setCurrentInput('')
+      continueFromResult(op)
       return
     }
 
-    // Normal: first operand entered, operator pressed
-    const inputVal = currentInput || '0'
-    setPreviousInput(inputVal)
-    setSelectedOperation(op)
-    setExpression(`${inputVal} ${OP_SYMBOLS[op]}`)
-    setCurrentInput('')
+    startOperation(op)
   }
 
   const handleSqrt = async () => {

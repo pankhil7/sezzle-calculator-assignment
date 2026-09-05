@@ -354,6 +354,7 @@ sezzle-assignment/
 ├── frontend/                  # React + TypeScript + Vite
 │   ├── src/
 │   │   ├── components/        # Calculator, Display, Button, History, useCalculator hook
+│   │   ├── constants/         # OP_MAP and OP_SYMBOLS shared across calculator logic
 │   │   ├── services/          # Axios API client (calculatorApi, logger)
 │   │   ├── util/              # Error message mapping
 │   │   ├── types/             # Shared TypeScript interfaces
