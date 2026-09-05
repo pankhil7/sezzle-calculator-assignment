@@ -14,7 +14,10 @@ class CalculationRepository:
         operand_a: float,
         result: float,
         operand_b: float | None = None,
-    ) -> Calculation:
+        persist: bool = True,
+    ) -> Calculation | None:
+        if not persist:
+            return None
         logger.debug(f"DB save: {operation}({operand_a}, {operand_b}) = {result}")
         record = Calculation(
             operation=operation,

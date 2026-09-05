@@ -19,7 +19,6 @@ async def multiply(body: BinaryInput, persist: bool = Query(True), repo: Calcula
     except ValueError as exc:
         logger.warning(f"multiply validation error: {exc}")
         raise HTTPException(status_code=400, detail=str(exc))
-    if persist:
-        await repo.save("multiply", body.a, result, body.b)
+    await repo.save("multiply", body.a, result, body.b, persist=persist)
     logger.info(f"multiply: result={result}")
     return CalculationResponse(operation="multiply", operand_a=body.a, operand_b=body.b, result=result)

@@ -19,7 +19,6 @@ async def add(body: BinaryInput, persist: bool = Query(True), repo: CalculationR
     except ValueError as exc:
         logger.warning(f"add validation error: {exc}")
         raise HTTPException(status_code=400, detail=str(exc))
-    if persist:
-        await repo.save("add", body.a, result, body.b)
+    await repo.save("add", body.a, result, body.b, persist=persist)
     logger.info(f"add: result={result}")
     return CalculationResponse(operation="add", operand_a=body.a, operand_b=body.b, result=result)

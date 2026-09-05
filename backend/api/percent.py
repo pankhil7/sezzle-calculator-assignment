@@ -19,7 +19,6 @@ async def percent(body: BinaryInput, persist: bool = Query(True), repo: Calculat
     except ValueError as exc:
         logger.warning(f"percent validation error: {exc}")
         raise HTTPException(status_code=400, detail=str(exc))
-    if persist:
-        await repo.save("percent", body.a, result, body.b)
+    await repo.save("percent", body.a, result, body.b, persist=persist)
     logger.info(f"percent: result={result}")
     return CalculationResponse(operation="percent", operand_a=body.a, operand_b=body.b, result=result)

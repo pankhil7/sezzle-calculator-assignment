@@ -19,7 +19,6 @@ async def subtract(body: BinaryInput, persist: bool = Query(True), repo: Calcula
     except ValueError as exc:
         logger.warning(f"subtract validation error: {exc}")
         raise HTTPException(status_code=400, detail=str(exc))
-    if persist:
-        await repo.save("subtract", body.a, result, body.b)
+    await repo.save("subtract", body.a, result, body.b, persist=persist)
     logger.info(f"subtract: result={result}")
     return CalculationResponse(operation="subtract", operand_a=body.a, operand_b=body.b, result=result)

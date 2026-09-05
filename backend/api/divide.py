@@ -22,7 +22,6 @@ async def divide(body: BinaryInput, persist: bool = Query(True), repo: Calculati
     except ValueError as exc:
         logger.warning(f"divide validation error: {exc}")
         raise HTTPException(status_code=400, detail=str(exc))
-    if persist:
-        await repo.save("divide", body.a, result, body.b)
+    await repo.save("divide", body.a, result, body.b, persist=persist)
     logger.info(f"divide: result={result}")
     return CalculationResponse(operation="divide", operand_a=body.a, operand_b=body.b, result=result)

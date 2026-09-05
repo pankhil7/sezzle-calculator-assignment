@@ -23,7 +23,6 @@ async def sqrt(body: UnaryInput, persist: bool = Query(True), repo: CalculationR
     except ValueError as exc:
         logger.warning(f"sqrt validation error: {exc}")
         raise HTTPException(status_code=400, detail=str(exc))
-    if persist:
-        await repo.save("sqrt", body.a, result)
+    await repo.save("sqrt", body.a, result, persist=persist)
     logger.info(f"sqrt: result={result}")
     return CalculationResponse(operation="sqrt", operand_a=body.a, result=result)

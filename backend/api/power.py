@@ -27,7 +27,6 @@ async def power(body: BinaryInput, persist: bool = Query(True), repo: Calculatio
     except ValueError as exc:
         logger.warning(f"power validation error: {exc}")
         raise HTTPException(status_code=400, detail=str(exc))
-    if persist:
-        await repo.save("power", body.a, result, body.b)
+    await repo.save("power", body.a, result, body.b, persist=persist)
     logger.info(f"power: result={result}")
     return CalculationResponse(operation="power", operand_a=body.a, operand_b=body.b, result=result)
